@@ -1,0 +1,58 @@
+[gd_scene load_steps=6 format=3 uid="uid://b1m2hoscs8vab"]
+
+[ext_resource type="PackedScene" uid="uid://beyc8c84wvs0v" path="res://player.tscn" id="1_78wo1"]
+[ext_resource type="Script" path="res://Main.gd" id="1_aa3ri"]
+[ext_resource type="PackedScene" uid="uid://dhc5s83kooar5" path="res://mob.tscn" id="2_ueo18"]
+[ext_resource type="PackedScene" uid="uid://uhb188gj8b5h" path="res://HUD.tscn" id="4_3ietx"]
+
+[sub_resource type="Curve2D" id="Curve2D_13fwu"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 1, -1, 0, 0, 0, 0, 480, 1, 0, 0, 0, 0, 479, 720, 0, 0, 0, 0, 0, 719, 0, 0, 0, 0, 1, -1)
+}
+point_count = 5
+
+[node name="Main" type="Node"]
+script = ExtResource("1_aa3ri")
+mob_scene = ExtResource("2_ueo18")
+
+[node name="MobTimer" type="Timer" parent="."]
+wait_time = 0.5
+
+[node name="ScoreTimer" type="Timer" parent="."]
+
+[node name="StartTimer" type="Timer" parent="."]
+wait_time = 2.0
+one_shot = true
+
+[node name="Player" parent="." instance=ExtResource("1_78wo1")]
+z_index = 1
+
+[node name="StartPosition" type="Marker2D" parent="."]
+position = Vector2(240, 450)
+
+[node name="MobPath" type="Path2D" parent="."]
+curve = SubResource("Curve2D_13fwu")
+
+[node name="MobSpawnLocation" type="PathFollow2D" parent="MobPath"]
+position = Vector2(1, -1)
+rotation = 0.00417534
+
+[node name="HUD" parent="." instance=ExtResource("4_3ietx")]
+
+[node name="ColorRect" type="ColorRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.0901961, 0.0901961, 0.188235, 1)
+
+[node name="Music" type="AudioStreamPlayer2D" parent="."]
+
+[node name="DeathSound" type="AudioStreamPlayer2D" parent="."]
+
+[connection signal="timeout" from="MobTimer" to="." method="_on_mob_timer_timeout"]
+[connection signal="timeout" from="ScoreTimer" to="." method="_on_score_timer_timeout"]
+[connection signal="timeout" from="StartTimer" to="." method="_on_start_timer_timeout"]
+[connection signal="hit" from="Player" to="." method="_on_player_hit"]
+[connection signal="start_game" from="HUD" to="." method="_on_hud_start_game"]
